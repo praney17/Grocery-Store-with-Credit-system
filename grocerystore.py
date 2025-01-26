@@ -99,7 +99,7 @@ def store_simulation():
         account = Basic_account( name, num)
         account.new_member()
         print("Congratulations! You are now a basic member")
-        print(f"Your details are: {name} with member id {member_id} and membership type {membership}")
+        
         
       if membership=='2':
         print('Pay Rs.2500 and become a premium member now! ')
@@ -107,7 +107,7 @@ def store_simulation():
         account=Premium_account(name,num)
         account.new_member()
         print('Congratulations! You are now a premium member')
-        print(f"Your details are: {name} with member id {member_id} and membership type {membership}")
+        
     
     elif choice=='2':
       print('Enter ID')
