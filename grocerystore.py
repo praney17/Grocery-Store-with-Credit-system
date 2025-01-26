@@ -8,6 +8,7 @@ def db_connection():
       database="GROCERY_STORE"
    )
 
+a=1
 class Basic_account:
   def __init__(self,name,num):
     self.name=name
@@ -55,7 +56,7 @@ def upgrade_membership(account_ID):
    
   
 def validate_payment():
-   global a=1
+   
    x=input('Confirm Payment? (yes/no): ')
    if x=='yes':
       print('Payment successful')
