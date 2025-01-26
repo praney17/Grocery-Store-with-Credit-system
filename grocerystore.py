@@ -52,12 +52,18 @@ def upgrade_membership(account_ID):
       print("member id not found")
     
    connection.close()
-
    
+  
+def validate_payment():
+   x=input('Confirm Payment? (yes/no): ')
+   if x=='yes':
+    print('Payment successful')
+   else: print('Payment rejected')
+
+
+
 
   
-
-
 
 def store_simulation():
 
@@ -88,6 +94,7 @@ def store_simulation():
 
       if membership== '1':
         print('Pay Rs.1500 and become a basic member now!')
+        validate_payment()
         account = Basic_account( name, num)
         account.new_member()
         print("Congratulations! You are now a basic member")
@@ -95,6 +102,7 @@ def store_simulation():
         
       if membership=='2':
         print('Pay Rs.2500 and become a premium member now! ')
+        validate_payment()
         account=Premium_account(name,num)
         account.new_member()
         print('Congratulations! You are now a premium member')
@@ -130,7 +138,7 @@ def store_simulation():
                 print("Insufficient credits")
           elif option == '2':
              amount = int(input("Enter the amount you want to pay: "))
-
+             validate_payment()
              if membership.lower() == 'basic':
                 credits_earned = amount // 100
              else:
@@ -155,6 +163,7 @@ def store_simulation():
       print('Enter you member id')
       member_id=input()
       print('Pay Rs.500 to upgrade membership from Basic to premium.')
+      validate_payment()
       upgrade_membership(member_id)
 
     
