@@ -57,8 +57,9 @@ def upgrade_membership(account_ID):
 def validate_payment():
    x=input('Confirm Payment? (yes/no): ')
    if x=='yes':
-    print('Payment successful')
-   else: print('Payment rejected')
+      print('Payment successful')
+   else:
+      print('Payment rejected')
 
 
 
