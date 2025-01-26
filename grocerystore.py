@@ -101,7 +101,7 @@ def store_simulation():
       if membership== '1':
         print('Pay Rs.1500 and become a basic member now!')
         validate_payment()
-        if a==1
+        if a==1:
            account = Basic_account( name, num)
            account.new_member()
            print("Congratulations! You are now a basic member")
@@ -110,7 +110,7 @@ def store_simulation():
       if membership=='2':
         print('Pay Rs.2500 and become a premium member now! ')
         validate_payment()
-        if a==1
+        if a==1:
            account=Premium_account(name,num)
            account.new_member()
            print('Congratulations! You are now a premium member')
@@ -147,7 +147,7 @@ def store_simulation():
           elif option == '2':
              amount = int(input("Enter the amount you want to pay: "))
              validate_payment()
-             if a==1
+             if a==1:
                 if membership.lower() == 'basic':
                    credits_earned = amount // 100
                 else:
@@ -173,7 +173,7 @@ def store_simulation():
       member_id=input()
       print('Pay Rs.750 to upgrade membership from Basic to premium.')
       validate_payment()
-      if a==1
+      if a==1:
          upgrade_membership(member_id)
 
     
