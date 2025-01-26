@@ -55,11 +55,15 @@ def upgrade_membership(account_ID):
    
   
 def validate_payment():
+   global a
    x=input('Confirm Payment? (yes/no): ')
    if x=='yes':
       print('Payment successful')
    else:
       print('Payment rejected')
+      a=0
+      
+      
 
 
 
@@ -96,17 +100,19 @@ def store_simulation():
       if membership== '1':
         print('Pay Rs.1500 and become a basic member now!')
         validate_payment()
-        account = Basic_account( name, num)
-        account.new_member()
-        print("Congratulations! You are now a basic member")
+        if a==1
+           account = Basic_account( name, num)
+           account.new_member()
+           print("Congratulations! You are now a basic member")
         
         
       if membership=='2':
         print('Pay Rs.2500 and become a premium member now! ')
         validate_payment()
-        account=Premium_account(name,num)
-        account.new_member()
-        print('Congratulations! You are now a premium member')
+        if a==1
+           account=Premium_account(name,num)
+           account.new_member()
+           print('Congratulations! You are now a premium member')
         
     
     elif choice=='2':
@@ -140,22 +146,23 @@ def store_simulation():
           elif option == '2':
              amount = int(input("Enter the amount you want to pay: "))
              validate_payment()
-             if membership.lower() == 'basic':
-                credits_earned = amount // 100
-             else:
-                credits_earned = amount // 50
+             if a==1
+                if membership.lower() == 'basic':
+                   credits_earned = amount // 100
+                else:
+                   credits_earned = amount // 50
 
-             credits += credits_earned
-             cursor.execute(
-                "UPDATE members SET credit_balance = %s WHERE member_id = %s ",
-                (credits, member_id)
-             )
-             connection.commit()
-             print(f"You earned {credits_earned} credits! Total credits: {credits}")
-      else:
-        print("Invalid memberid. Please check again.")
+                credits += credits_earned
+                cursor.execute(
+                   "UPDATE members SET credit_balance = %s WHERE member_id = %s ",
+                   (credits, member_id)
+                )
+                connection.commit()
+                print(f"You earned {credits_earned} credits! Total credits: {credits}")
+         else:
+           print("Invalid member id. Please check again.")
     
-      connection.close()
+         connection.close()
       
 
 
@@ -163,9 +170,10 @@ def store_simulation():
     elif choice=='3':
       print('Enter you member id')
       member_id=input()
-      print('Pay Rs.500 to upgrade membership from Basic to premium.')
+      print('Pay Rs.750 to upgrade membership from Basic to premium.')
       validate_payment()
-      upgrade_membership(member_id)
+      if a==1
+         upgrade_membership(member_id)
 
     
     elif choice == "4":
