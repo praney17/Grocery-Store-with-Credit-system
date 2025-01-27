@@ -1,31 +1,83 @@
+import mysql.connector
+
+def db_connection():
+   return mysql.connector.connect(
+      host="localhost",
+      user="root",
+      password="tiger",
+      database="GROCERY_STORE"
+   )
+
 
 class Basic_account:
-  all_basic_acc={}
-
-  def __init__(self,account_ID,name,num):
-    self.account_ID=account_ID
+  def __init__(self,name,num):
     self.name=name
     self.num=num
     self.credits=0
+  
+  def new_member(self):
+     connection = db_connection()
+     cursor = connection.cursor()
+     cursor.execute ("INSERT INTO members ( member_name, membership_type, credit_balance, pnumber) VALUES (%s, %s, %s, %s)",
+                     (self.name, 'Basic', self.credits, self.num))
+     connection.commit()
+     cursor.close()
+     connection.close()
 
 class Premium_account(Basic_account):
-  all_prem_acc={}
+  def __init__(self,name, num):
+     super().__init__( name, num)
+     self.credits=0
+
+  def new_member(self):
+     connection = db_connection()
+     cursor = connection.cursor()
+     cursor.execute ("INSERT INTO members (member_name, membership_type, credit_balance, pnumber) VALUES (%s, %s, %s, %s)",
+                     (self.name, 'Premium', self.credits, self.num))
+     connection.commit()
+     cursor.close()
+     connection.close()
+
+def upgrade_membership(account_ID):
+   connection = db_connection()
+   cursor = connection.cursor()
+   cursor.execute("SELECT * FROM members WHERE member_id = %s", (account_ID))
+   result = cursor.fetchone()
+
+   if result:
+      cursor.execute("UPDATE members SET membership_typ = 'Premium' WHERE member_id = %s", (account_ID))
+      connection.commit()
+      print("◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈\n\nCONGRATULATIONS!!!!!\nyou've upgraded to Premium membership\n\n◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈")
+      
+   else:
+      print("member id not found")
+    
+   connection.close()
+   
+  
+def validate_payment():
+
+   x=input('Confirm Payment? (yes/no): ')
+   if x=='yes'.lower():
+      print('Payment successful')
+      return True
+   else:
+      print('Payment rejected')
+      return False
+      
+      
+      
 
 
-def upgrade_membership(id):
-  a=Basic_account.all_basic_acc.pop(id)
-  Premium_account.all_prem_acc[id]=a
-  print('Congratulations. You are now upgraded to a premium member!')
-  print(Premium_account.all_prem_acc)
 
 
+  
 
 def store_simulation():
-
-
+  
   print('\nWelcome user!Purchase our store membership to avail the following benefits:\n\n' )
-  print('BASIC MEMBERSHIP:\n .\n * Earn 1 credit on shopping for every 100Rs.\n *Avail these credits to get vouchers and shop more!\n **** Buy Basic membership just with one time payment of 2000Rs. ****')
-  print('\n\nPREMIUM MEMBERSHIP:\n *Avail 10% discount every time you shop.\n * Earn 1 credit on shopping for every 50Rs.\n *Avail these credits to get vouchers and shop more! * Also get early access to sales!\n **** Buy premium membership just with Rs.2000 and later pay Rs.1000 per three months to continue with your membership plan. ****\n')
+  print('BASIC MEMBERSHIP:\n .\n * Earn 1 credit on shopping for every 100Rs.\n *Avail these credits to get vouchers and shop more!\n **** Buy Basic membership just with one time payment of 1500Rs. ****')
+  print('\n\nPREMIUM MEMBERSHIP:\n *Avail 10% discount every time you shop.\n * Earn 1 credit on shopping for every 50Rs.\n *Avail these credits to get vouchers and shop more!\n * Also get early access to sales!\n **** Buy premium membership just with Rs.2500 and later pay Rs.1000 per three months to continue with your membership plan. ****\n')
 
   while(True):
 
@@ -33,16 +85,15 @@ def store_simulation():
     print('1.) Buy membership')
     print('2.) Access account')
     print('3.) Upgrade membership')
-    print('4.) Exit')
+    print('4.) Check credits')
+    print('5.) Exit')
     choice=input()
   
-    if choice== '1':
+    if choice=='1':
       print('Choose type of membership:')
       print('1.) Basic')
       print('2.) Premium')
       membership=input()
-      print('Enter your ID')
-      id=input()
       print("Enter your name")
       name=input()
       print("Enter your contact no.")
@@ -50,81 +101,105 @@ def store_simulation():
 
       if membership== '1':
         print('Pay Rs.1500 and become a basic member now!')
-        account=Basic_account(id,name,num)
-        Basic_account.all_basic_acc[id]=account
-        # also add this Id and everything to the database (praney)
-        print('Congratulations! You are now a basic member')
+        payment_status = validate_payment()
+        if payment_status:
+           account = Basic_account( name, num)
+           account.new_member()
+           print("Congratulations! You are now a basic member")
+        
         
       if membership=='2':
         print('Pay Rs.2500 and become a premium member now! ')
+        payment_status = validate_payment()
+        if payment_status:
+           account=Premium_account(name,num)
+           account.new_member()
+           print('Congratulations! You are now a premium member')
         
-        account=Premium_account(id,name,num)
-        Premium_account.all_prem_acc[id]=account
-       # also add this Id everything to the database (praney)
-        print('Congratulations! You are now a premium member')
     
-    if choice == '2':
+    elif choice=='2':
       print('Enter ID')
-      id = input()
+      member_id=input()
+      connection = db_connection()
+      cursor = connection.cursor()
+      cursor.execute("SELECT * FROM members WHERE member_id = %s", (member_id,))
+      result = cursor.fetchone()
 
-      account = None
-      if id in Basic_account.all_basic_acc:
-          account = Basic_account.all_basic_acc[id]
-      elif id in Premium_account.all_prem_acc:
-          account = Premium_account.all_prem_acc[id]
-      else:
-          print('ID not valid')
-          continue
-
-      print("Welcome user " + id + ".")
-      print('Choose an option: \n1.) Use credits.\n2.) Pay and earn credits.')
-      option = input()
-
-      if option == '1':
-          print("You have " + str(account.credits) + " credits.")
-          amount_to_use = int(input("Enter the number of credits you want to use: "))
-
-          if amount_to_use <= account.credits:
-              account.credits -= amount_to_use
-              print(str(amount_to_use) + " credits used successfully. Remaining credits: " + str(account.credits))
+      if result:
+          member_id, name, membership, credits, num = result
+          print(f"Welcome {name}! Your membership type is {membership} and you have {credits} credits")
+          
+          print('Choose an option: \n1.)Use credits.\n2.)Pay and earn credits.')
+          option=input()
+          
+          if option == '1':
+             print(f"You have {credits} credits.")
+             amount_to_use = int(input("Enter the number of credits you want to use: "))
+             
+             if amount_to_use <= credits:
+                credits -= amount_to_use
+                cursor.execute(
+                   "UPDATE members SET credit_balance = %s WHERE member_id = %s", (credits, member_id)
+                )
+                connection.commit()
+                print(f"{amount_to_use} credits used successfully. Remaining Credits: {credits}")
+             else:
+                print("Insufficient credits")
+          elif option == '2':
+             amount = int(input("Enter the subtotal amount: "))
+             payment_status = validate_payment()
+             if payment_status:
+                if membership.lower() == 'basic':
+                   credits_earned = amount // 100
+                   print(f"Total payable amount is {amount}Rs.")
+                else:
+                   credits_earned = amount // 50
+                   print(f"You are a Premium member! You get 10% discount on the subtotal amount. Total payable amount after discount is {amount*0.9}Rs.")
+                credits += credits_earned
+                cursor.execute(
+                   "UPDATE members SET credit_balance = %s WHERE member_id = %s ",
+                   (credits, member_id)
+                )
+                connection.commit()
+                print(f"You earned {credits_earned} credits! Total credits now: {credits}")
           else:
-              print("Insufficient credits!")
-
-      elif option == '2':
-          amount = int(input("Enter the subtotal amount: "))
-
-          if isinstance(account, Basic_account) and not isinstance(account, Premium_account):
-              total_payable_amount=amount
-              credits_earned = amount // 100
-          
-          elif isinstance(account, Premium_account):
-              credits_earned = amount // 50
-              total_payable_amount=0.9*amount
-              print('You are a premium member.You get 10% discount on your subtotal amount!')
+           print("Invalid member id. Please check again.")
     
-          account.credits += credits_earned
-          
-          print(f"The net total amount to be paid is Rs.{total_payable_amount}")
-          print("You earned " + str(credits_earned) + " credits! Total credits: " + str(account.credits))
-      else:
-        print("Invalid option. Please try again.")
-
-
-
-
-    if choice=='3':
-      print('Enter you member id')
-      id=input()
-      # Check whether id is already a basic member in the database. (Praney).If not print('You need to be a basic member to proceed for upgradation.). If already a basic member, then:-
-      print('Pay Rs.500 to upgrade membership from Basic to premium.')
-      upgrade_membership(id)
+          connection.close()
       
-    if choice=='4':
-      print('\nGoodbye!')
+
+
+
+    elif choice=='3':
+      print('Enter you member id')
+      member_id=input()
+      print('Pay Rs.750 to upgrade membership from Basic to Premium.')
+      payment_status = validate_payment()
+      if payment_status:
+         upgrade_membership(member_id)
+
+    
+    elif choice == "4":
+       print("Enter ID")
+       member_id=input()
+       connection = db_connection()
+       cursor = connection.cursor()
+       cursor.execute("SELECT * FROM members WHERE member_id = %s", (member_id,))
+       result = cursor.fetchone()
+
+       if result:
+          member_id, name, membership, credits, num = result
+          print(f"Your current credits are {credits}")
+
+       else:
+          print("Not a valid ID, please make an account")
+
+    elif choice=='5':
+      print('Goodbye!')
       break
 
 store_simulation()
-
+    
 
 
 
