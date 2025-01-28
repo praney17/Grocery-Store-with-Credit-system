@@ -49,6 +49,7 @@ def upgrade_membership(account_ID):
       connection.commit()
       print("◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈\n\nCONGRATULATIONS!!!!!\nyou've upgraded to Premium membership\n\n◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈")
       
+      
    else:
       print("member id not found")
     
@@ -58,7 +59,7 @@ def upgrade_membership(account_ID):
 def validate_payment():
 
    x=input('Confirm Payment? (yes/no): ')
-   if x=='yes'.lower():
+   if x.lower() == 'yes':
       print('Payment successful')
       return True
    else:
@@ -125,7 +126,7 @@ def store_simulation():
       cursor.execute("SELECT * FROM members WHERE member_id = %s", (member_id,))
       result = cursor.fetchone()
 
-      if result:
+      if result is not None:
           member_id, name, membership, credits, num = result
           print(f"Welcome {name}! Your membership type is {membership} and you have {credits} credits")
           
@@ -162,10 +163,9 @@ def store_simulation():
                 )
                 connection.commit()
                 print(f"You earned {credits_earned} credits! Total credits now: {credits}")
-          else:
-           print("Invalid member id. Please check again.")
-    
-          connection.close()
+      else:
+         print("Invalid member id. Please check again.")
+         connection.close()
       
 
 
@@ -200,7 +200,6 @@ def store_simulation():
 
 store_simulation()
     
-
 
 
 
