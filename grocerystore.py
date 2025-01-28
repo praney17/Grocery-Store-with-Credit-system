@@ -21,8 +21,14 @@ class Basic_account:
      cursor.execute ("INSERT INTO members ( member_name, membership_type, credit_balance, pnumber) VALUES (%s, %s, %s, %s)",
                      (self.name, 'Basic', self.credits, self.num))
      connection.commit()
+     
+     cursor.execute("SELECT LAST_INSERT_ID()")
+     member_id = cursor.fetchone()[0]
+     
      cursor.close()
      connection.close()
+
+     print(f"Congratulations {self.name}! You are now a Basic member. Your Member ID is {member_id}.")
 
 class Premium_account(Basic_account):
   def __init__(self,name, num):
@@ -35,17 +41,23 @@ class Premium_account(Basic_account):
      cursor.execute ("INSERT INTO members (member_name, membership_type, credit_balance, pnumber) VALUES (%s, %s, %s, %s)",
                      (self.name, 'Premium', self.credits, self.num))
      connection.commit()
+     
+     cursor.execute("SELECT LAST_INSERT_ID()")
+     member_id = cursor.fetchone()[0]
+     
      cursor.close()
      connection.close()
+
+     print(f"Congratulations {self.name}! You are now a Premium member. Your Member ID is {member_id}.")
 
 def upgrade_membership(account_ID):
    connection = db_connection()
    cursor = connection.cursor()
-   cursor.execute("SELECT * FROM members WHERE member_id = %s", (account_ID))
+   cursor.execute("SELECT * FROM members WHERE member_id = %s", (account_ID,))
    result = cursor.fetchone()
 
    if result:
-      cursor.execute("UPDATE members SET membership_typ = 'Premium' WHERE member_id = %s", (account_ID))
+      cursor.execute("UPDATE members SET membership_type = 'Premium' WHERE member_id = %s", (account_ID,))
       connection.commit()
       print("◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈\n\nCONGRATULATIONS!!!!!\nyou've upgraded to Premium membership\n\n◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈")
       
